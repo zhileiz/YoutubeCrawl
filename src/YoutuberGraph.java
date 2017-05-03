@@ -6,19 +6,21 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeoutException;
 
 /**
  * Created by zhileiz on 4/30/17.
  */
 public class YoutuberGraph {
-    private HashMap<String, Youtuber> connections;
+    private ConcurrentHashMap<String, Youtuber> connections;
     private Queue<Youtuber> toBeSeen;
     private HashSet<Youtuber> Visited;
 
     public YoutuberGraph(){
-        connections = new HashMap<String, Youtuber>();
-        toBeSeen = new ArrayDeque<Youtuber>();
+        connections = new ConcurrentHashMap<String, Youtuber>();
+        toBeSeen = new ConcurrentLinkedQueue<Youtuber>();
         Visited = new HashSet<Youtuber>();
     }
 
@@ -28,7 +30,7 @@ public class YoutuberGraph {
         } else {
             connections.put(u.getName(), u);
             toBeSeen.add(u);
-            print(u);
+            //print(u);
             return true;
         }
     }
@@ -100,6 +102,7 @@ public class YoutuberGraph {
             }
             Youtuber now = CrawlThread.addChannel(st);
             this.addYoutuber(now);
+            System.out.println(connections.size() + ": added: " + now.getName() + " with " + now.getSize() + " followers from " + u.getName());
             this.addEdge(u,now);
         }
     }

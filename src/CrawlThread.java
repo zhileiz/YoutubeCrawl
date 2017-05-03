@@ -4,8 +4,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Created by zhileiz on 5/3/17.
@@ -15,6 +13,9 @@ public class CrawlThread implements Runnable {
     String channel2 = "https://www.youtube.com/user/marquesbrownlee";
     String channel3 = "https://www.youtube.com/user/WatchMojo";
     String channel4 = "https://www.youtube.com/user/hickok45";
+    YoutuberGraph graph;
+    String starter;
+    int ThreadNum;
     /**
      * When an object implementing interface <code>Runnable</code> is used
      * to create a thread, starting the thread causes the object's
@@ -27,14 +28,36 @@ public class CrawlThread implements Runnable {
      * @see Thread#run()
      */
 
-    public CrawlThread(HashSet<Youtuber> input){
-
+    public CrawlThread(YoutuberGraph input, int it){
+        graph = input;
+        switch (it){
+            case 1:
+                starter = channel1;
+                break;
+            case 2:
+                starter = channel2;
+                break;
+            case 3:
+                starter = channel3;
+                break;
+            case 4:
+                starter = channel4;
+                break;
+        }
+        ThreadNum = it-1;
     }
 
 
     @Override
     public void run() {
-
+        try {
+            Youtuber current = CrawlThread.addChannel(starter);
+            System.out.println("-----OnThread: " + this.ThreadNum + "-----");
+            graph.addYoutuber(current);
+            graph.DoBFS();
+        } catch (Exception e){
+            System.out.println("Something is wrong!");
+        }
     }
 
     public static Youtuber addChannel(String url) throws IOException {

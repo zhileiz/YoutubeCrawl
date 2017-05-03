@@ -1,18 +1,24 @@
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
-    String channel1 = "https://www.youtube.com/user/TaylorSwiftVEVO";
-    String channel2 = "https://www.youtube.com/user/marquesbrownlee";
-    String channel3 = "https://www.youtube.com/user/WatchMojo";
-    String channel4 = "https://www.youtube.com/user/hickok45";
-
 
     public static void main(String[] args) throws IOException {
-        String starter = "https://www.youtube.com/user/WonderWhy7439";
         YoutuberGraph graph = new YoutuberGraph();
-        Youtuber current = CrawlThread.addChannel(starter);
-        graph.addYoutuber(current);
-        graph.DoBFS();
+        ArrayList<Thread> threads = new ArrayList<Thread>();
+        for (int i = 0; i < 4; i++) {
+            threads.add(new Thread(new CrawlThread(graph,i+1)));
+        }
+        for (int i = 0; i < 4; i++) {
+            threads.get(i).start();
+        }
+        for (int i = 0; i < 4; i++) {
+            try {
+                threads.get(i).join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
